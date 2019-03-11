@@ -172,6 +172,9 @@
     (trawl--peel (car (last form))))
    ((eq (car form) '\`)
     (trawl--peel (trawl--remove-comma (cadr form))))
+   ((and (stringp (car form))
+   	 (stringp (cdr form)))
+    (concat (trawl--peel (car form)) (trawl--peel (cdr form))))
    (t form)))
 
 ;; A list peeled of irrelevancies, or nil.
