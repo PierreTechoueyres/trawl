@@ -182,7 +182,7 @@ and PATH (reversed list of list indices to follow to target)."
 
 (defun relint--check-re-string (re name file pos path)
   (relint--check-string re #'xr-lint name file pos path))
-  
+
 (defvar relint--variables nil
   "Alist of variable definitions seen so far.
  The variable names map to unevaluated forms.")
@@ -474,7 +474,7 @@ not be evaluated safely."
               (relint--eval (cons 'or (cddr form)))
             val))
       nil))
-   
+
    ((eq (car form) 'cond)
     (and (cdr form)
          (let ((clause (cadr form)))
@@ -693,7 +693,7 @@ evaluated are nil."
         (and (consp val) val))
     (relint--eval-error (relint--report file pos path (cdr err))
                         nil)))
-  
+
 
 (defun relint--get-string (form file pos path)
   "Convert something to a string, or nil."
@@ -750,7 +750,7 @@ evaluated are nil."
                    (re-form (cdr (assq 'regexp (cdr rule))))
                    (re (relint--get-string re-form file pos path)))
               (when (stringp re)
-                (relint--check-re-string 
+                (relint--check-re-string
                  re (format "%s (%s)" name rule-name) file pos path)))))
         (relint--get-list form file pos path)))
 
@@ -1157,11 +1157,13 @@ Return a list of (FORM . STARTING-POSITION)."
   "Mode for relint output."
   (setq-local relint-last-target nil))
 
-(defun relint--scan-files (files target base-dir)
+(defun relint--scan-files (files target base-dir &optional excludes)
   (relint--init target base-dir)
-  (dolist (file files)
-    ;;(relint--add-to-error-buffer (format "Scanning %s\n" file))
-    (relint--scan-file file base-dir))
+  (let ((excludes (or excludes "a\\`")))
+    (dolist (file files)
+      ;;(relint--add-to-error-buffer (format "Scanning %s\n" file))
+      (unless (string-match excludes file)
+	(relint--scan-file file base-dir))))
   (relint--finish))
 
 (defun relint--tree-files (dir)
@@ -1176,13 +1178,13 @@ Return a list of (FORM . STARTING-POSITION)."
   (relint--scan-files (list file) file (file-name-directory file)))
 
 ;;;###autoload
-(defun relint-directory (dir)
+(defun relint-directory (dir &optional excludes)
   "Scan all *.el files in DIR for regexp-related errors."
   (interactive "DRelint directory: ")
   (message "Finding .el files in %s..." dir)
   (let ((files (relint--tree-files dir)))
     (message "Scanning files...")
-    (relint--scan-files files dir dir)))
+    (relint--scan-files files dir dir excludes)))
 
 ;;;###autoload
 (defun relint-current-buffer ()
