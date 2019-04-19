@@ -185,29 +185,29 @@ and PATH (reversed list of list indices to follow to target)."
 
 (defvar relint--variables nil
   "Alist of variable definitions seen so far.
- The variable names map to unevaluated forms.")
+The variable names map to unevaluated forms.")
+
+(defvar relint--checked-variables nil
+  "List of variables that have been checked.
+This allow to avoid checking direct uses of them.")
+
+(defvar relint--regexp-functions nil
+  "Alist of functions taking regexp argument(s).
+The names map to a list of the regexp argument indices.")
 
 
-;; List of variables that have been checked, so that we can avoid
-;; checking direct uses of it.
-(defvar relint--checked-variables)
+(defvar relint--function-defs nil
+  "List of functions defined in the current file.
+Each element on the form (FUNCTION ARGS BODY), where ARGS is the
+lambda list and BODY its body expression list. ")
 
-;; Alist of functions taking regexp argument(s).
-;; The names map to a list of the regexp argument indices.
-(defvar relint--regexp-functions)
+(defvar relint--macro-defs nil
+  "List of macros defined in the current file.
+Each element on the form (MACRO ARGS BODY), where ARGS is the lambda
+list and BODY its body expression list.")
 
-;; List of functions defined in the current file, each element on the
-;; form (FUNCTION ARGS BODY), where ARGS is the lambda list and BODY
-;; its body expression list.
-(defvar relint--function-defs)
-
-;; List of macros defined in the current file, each element on the
-;; form (MACRO ARGS BODY), where ARGS is the lambda list and BODY its
-;; body expression list.
-(defvar relint--macro-defs)
-
-;; Alist of alias definitions in the current file.
-(defvar relint--alias-defs)
+(defvar relint--alias-defs nil
+  "Alist of alias definitions in the current file.")
 
 (defconst relint--safe-functions
   '(cons list append
